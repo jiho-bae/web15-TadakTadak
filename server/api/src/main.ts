@@ -22,7 +22,7 @@ async function bootstrap() {
   app.enableCors(CorsConfig);
   app.use(helmet());
   SwaggerConfig(app);
-  await app.listen(3000);
+  await app.listen(3001);
 }
 
 bootstrap();
