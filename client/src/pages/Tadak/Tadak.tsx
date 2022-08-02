@@ -3,9 +3,10 @@ import RoomSideBar from '@components/sideBar/Room';
 import VideoController from '@components/video/VideoController';
 import VideoList from '@components/video/VideoList';
 import Loader from '@components/common/Loader';
-import useTadakAgora from '@src/hooks/useTadakAgora';
+import useAgora from '@src/hooks/useAgora';
 import { useUser } from '@contexts/userContext';
 import { RoomInfoType } from '@src/types';
+import { useMicrophoneAndCameraTracks } from '@src/components/video/config';
 
 interface LocationProps {
   pathname: string;
@@ -18,13 +19,16 @@ interface TadakProps {
 
 const Tadak = ({ location }: TadakProps): JSX.Element => {
   const { agoraAppId, agoraToken, uuid, owner, maxHeadcount } = location?.state;
+  const { ready, tracks } = useMicrophoneAndCameraTracks();
   const userInfo = useUser();
-  const { users, ready, tracks, start, setStart } = useTadakAgora({
+  const { users, start, setStart } = useAgora({
     agoraAppId,
     agoraToken,
     uuid,
     userInfo,
     agoraType: 'tadak',
+    ready,
+    tracks,
   });
 
   return (

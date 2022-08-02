@@ -7,9 +7,10 @@ import CamperList from '@src/components/campfire/CamperList';
 import Loader from '@components/common/Loader';
 import BGMContextProvider from '@contexts/bgmContext';
 import { useUser } from '@contexts/userContext';
-import useCampfireAgora from '@src/hooks/useCampfireAgora';
+import useAgora from '@src/hooks/useAgora';
 import { RoomType } from '@utils/constant';
 import { RoomInfoType } from '@src/types';
+import { useMicrophoneTrack } from '@src/components/video/config';
 
 interface LocationProps {
   pathname: string;
@@ -22,14 +23,17 @@ interface RoomProps {
 
 const Campfire = ({ location }: RoomProps): JSX.Element => {
   const { agoraAppId, agoraToken, uuid, owner, maxHeadcount } = location.state;
+  const { ready, track } = useMicrophoneTrack();
   const [fireOn, setFireOn] = useState(false);
   const userInfo = useUser();
-  const { users, start, setStart, track } = useCampfireAgora({
+  const { users, start, setStart } = useAgora({
     agoraAppId,
     agoraToken,
     uuid,
     userInfo,
     agoraType: 'campfire',
+    ready,
+    track,
   });
 
   useEffect(() => setFireOn(true), []);

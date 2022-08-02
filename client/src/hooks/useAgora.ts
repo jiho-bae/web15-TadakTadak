@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { UserInfoType } from '@src/types';
-import { useClient, useMicrophoneTrack } from '@src/components/video/config';
+import { useClient } from '@src/components/video/config';
 import { IAgoraRTCRemoteUser, ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-sdk-ng';
 import { userPublished, userUnpublished, userChanged, muteTrack, publishTrack } from '@src/agora/util';
 
@@ -10,22 +10,30 @@ type UseAgoraProps = {
   uuid: string;
   userInfo: UserInfoType;
   agoraType: 'tadak' | 'campfire';
+  ready: boolean;
+  track?: IMicrophoneAudioTrack | null;
+  tracks?: [IMicrophoneAudioTrack, ICameraVideoTrack] | null;
 };
 
 type UseAgoraReturns = {
   users: IAgoraRTCRemoteUser[];
   start: boolean;
-  ready: boolean;
-  track?: IMicrophoneAudioTrack | null;
-  tracks?: [IMicrophoneAudioTrack, ICameraVideoTrack] | null;
   setStart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function useCampfireAgora({ agoraAppId, agoraToken, uuid, userInfo, agoraType }: UseAgoraProps): UseAgoraReturns {
+function useTadakAgora({
+  agoraAppId,
+  agoraToken,
+  uuid,
+  userInfo,
+  agoraType,
+  ready,
+  track,
+  tracks,
+}: UseAgoraProps): UseAgoraReturns {
   const client = useClient();
   const [users, setUsers] = useState<IAgoraRTCRemoteUser[]>([]);
   const [start, setStart] = useState(false);
-  const { ready, track } = useMicrophoneTrack();
 
   const addUsers = useCallback((user: IAgoraRTCRemoteUser) => {
     setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
@@ -46,20 +54,20 @@ function useCampfireAgora({ agoraAppId, agoraToken, uuid, userInfo, agoraType }:
 
   const startAgora = useCallback(async () => {
     await client.join(agoraAppId, uuid, agoraToken, encodeURI(userInfo.nickname ?? ''));
-    await publishTrack(client, track);
-    await muteTrack({ track });
+    await publishTrack(client, track || tracks);
+    await muteTrack({ track, tracks });
 
     setStart(true);
-  }, [uuid, agoraAppId, agoraToken, client, track, userInfo]);
+  }, [uuid, agoraAppId, agoraToken, client, track, tracks, userInfo]);
 
   useEffect(() => {
-    if (ready && track) {
+    if (ready && (track || tracks)) {
       listenAgora();
       startAgora();
     }
-  }, [listenAgora, startAgora, ready, track]);
+  }, [listenAgora, startAgora, ready, track, tracks]);
 
-  return { users, start, ready, track, setStart };
+  return { users, start, setStart };
 }
 
-export default useCampfireAgora;
+export default useTadakAgora;
