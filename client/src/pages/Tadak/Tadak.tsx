@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
 import { IAgoraRTCRemoteUser } from 'agora-rtc-react';
 import { TadakContainer, TadakWrapper } from './style';
 import { useClient, useMicrophoneAndCameraTracks } from '@components/video/config';
@@ -27,61 +26,55 @@ const Tadak = ({ location }: TadakProps): JSX.Element => {
   const client = useClient();
   const { ready, tracks } = useMicrophoneAndCameraTracks();
   const userInfo = useUser();
-  const history = useHistory();
+
+  const init = useCallback(async () => {
+    client.on('user-published', async (user, mediaType) => {
+      await client.subscribe(user, mediaType);
+      console.log('subscribe success');
+      if (mediaType === 'video') {
+        setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
+      }
+      if (mediaType === 'audio') {
+        user.audioTrack?.play();
+      }
+    });
+
+    client.on('user-joined', (user) => {
+      setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
+    });
+
+    client.on('user-unpublished', (user, type) => {
+      console.log('unpublished', user, type);
+      if (type === 'audio') {
+        user.audioTrack?.stop();
+      }
+      if (type === 'video') {
+        user.videoTrack?.stop();
+      }
+    });
+
+    client.on('user-left', (user) => {
+      console.log('leaving', user);
+      setUsers((prevUsers) => {
+        return prevUsers.filter((User) => User.uid !== user.uid);
+      });
+    });
+
+    await client.join(agoraAppId, uuid, agoraToken, encodeURI(userInfo.nickname ?? ''));
+    if (tracks) {
+      await client.publish([tracks[0], tracks[1]]);
+      await tracks[1].setEnabled(false);
+      await tracks[0].setEnabled(false);
+    }
+    setIsLoading(false);
+    setStart(true);
+  }, [uuid, agoraAppId, agoraToken, client, tracks, userInfo]);
 
   useEffect(() => {
-    if (!userInfo.login) {
-      history.goBack();
-      return;
-    }
-    const init = async () => {
-      client.on('user-published', async (user, mediaType) => {
-        await client.subscribe(user, mediaType);
-        console.log('subscribe success');
-        if (mediaType === 'video') {
-          setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
-        }
-        if (mediaType === 'audio') {
-          user.audioTrack?.play();
-        }
-      });
-
-      client.on('user-joined', (user) => {
-        setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
-      });
-
-      client.on('user-unpublished', (user, type) => {
-        console.log('unpublished', user, type);
-        if (type === 'audio') {
-          user.audioTrack?.stop();
-        }
-        if (type === 'video') {
-          user.videoTrack?.stop();
-        }
-      });
-
-      client.on('user-left', (user) => {
-        console.log('leaving', user);
-        setUsers((prevUsers) => {
-          return prevUsers.filter((User) => User.uid !== user.uid);
-        });
-      });
-
-      await client.join(agoraAppId, uuid, agoraToken, encodeURI(userInfo.nickname ?? ''));
-      if (tracks) {
-        await client.publish([tracks[0], tracks[1]]);
-        await tracks[1].setEnabled(false);
-        await tracks[0].setEnabled(false);
-      }
-      setIsLoading(false);
-      setStart(true);
-    };
-
     if (ready && tracks) {
-      console.log('init ready');
       init();
     }
-  }, [uuid, agoraAppId, agoraToken, client, ready, tracks, userInfo, history]);
+  }, [init, ready, tracks]);
 
   return (
     <TadakWrapper>

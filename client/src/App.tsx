@@ -6,6 +6,7 @@ import ToastContainer from '@components/toast/ToastContainer';
 import { useUser, useUserFns } from '@contexts/userContext';
 import { getUserByToken } from '@src/apis';
 import Introduction from '@pages/Introduction';
+import { PATH } from './utils/constant';
 
 const Main = lazy(() => import('@pages/Main'));
 const Tadak = lazy(() => import('@pages/Tadak'));
@@ -23,11 +24,22 @@ const App = (): JSX.Element => {
     }
   }, [logUserIn]);
 
+  const isRoom = useCallback(() => {
+    const { pathname } = location;
+    const { tadak, campfire } = PATH;
+    return pathname.includes(tadak) || pathname.includes(campfire);
+  }, []);
+
   useEffect(() => {
     if (!user.login) {
       getUser();
+
+      if (isRoom()) {
+        location.replace(PATH.main);
+        return;
+      }
     }
-  }, [getUser, user]);
+  }, [getUser, user, isRoom]);
 
   return (
     <>
