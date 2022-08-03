@@ -9,7 +9,7 @@ type UseAgoraProps = {
   agoraToken: string;
   uuid: string;
   userInfo: UserInfoType;
-  agoraType: 'tadak' | 'campfire';
+  agoraType: string;
   ready: boolean;
   track?: IMicrophoneAudioTrack | null;
   tracks?: [IMicrophoneAudioTrack, ICameraVideoTrack] | null;

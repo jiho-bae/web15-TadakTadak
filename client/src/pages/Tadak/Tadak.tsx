@@ -7,6 +7,7 @@ import useAgora from '@src/hooks/useAgora';
 import { useUser } from '@contexts/userContext';
 import { RoomInfoType } from '@src/types';
 import { useMicrophoneAndCameraTracks } from '@src/components/video/config';
+import { PAGE_NAME } from '@src/utils/constant';
 
 interface LocationProps {
   pathname: string;
@@ -26,7 +27,7 @@ const Tadak = ({ location }: TadakProps): JSX.Element => {
     agoraToken,
     uuid,
     userInfo,
-    agoraType: 'tadak',
+    agoraType: PAGE_NAME.tadak,
     ready,
     tracks,
   });

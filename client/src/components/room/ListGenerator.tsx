@@ -8,6 +8,14 @@ import { RoomInfoType } from '@src/types';
 import { useToast } from '@hooks/useToast';
 import { RoomType, TOAST_MESSAGE } from '@utils/constant';
 import { getRoomByUuid, postEnterRoom } from '@src/apis';
+import styled from 'styled-components';
+
+export const RoomGrid = styled.div`
+  padding: ${({ theme }) => theme.paddings.lg} 0;
+  display: grid;
+  grid-template-columns: repeat(3, calc(100% / 3 - 1.5rem));
+  gap: 2rem;
+`;
 
 interface ListGeneratorProps {
   list: RoomInfoType[];
@@ -77,11 +85,11 @@ function ListGenerator({ list }: ListGeneratorProps): JSX.Element {
   }, [enterRoom]);
 
   return (
-    <div onClick={onClickRoomCard}>
+    <RoomGrid onClick={onClickRoomCard}>
       {list.map((roomInfo, idx) => (
         <RoomCard key={roomInfo.uuid} roomInfo={roomInfo} idx={idx} />
       ))}
-    </div>
+    </RoomGrid>
   );
 }
 

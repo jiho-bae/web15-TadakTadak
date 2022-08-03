@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { RoomListGrid, TabWrapper } from './style';
+import { RoomWrapper, TabWrapper } from './style';
 import ListGenerator from '@src/components/room/ListGenerator';
 import Loader from '@components/common/Loader';
 import Tab from '@components/common/Tab';
@@ -82,7 +82,7 @@ function RoomList(): JSX.Element {
         </Tab>
         <SearchBar search={search} onChange={onChangeSearch} onReset={onResetSearch} />
       </TabWrapper>
-      <RoomListGrid ref={target}>{rooms && <ListGenerator list={rooms} />}</RoomListGrid>
+      <RoomWrapper ref={target}>{rooms && <ListGenerator list={rooms} />}</RoomWrapper>
       {isLoading && <Loader />}
       <RefreshButton page={page} search={search} getRoomList={getRoomList} />
     </>

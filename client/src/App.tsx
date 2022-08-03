@@ -33,13 +33,14 @@ const App = (): JSX.Element => {
   useEffect(() => {
     if (!user.login) {
       getUser();
-
-      if (isRoom()) {
-        location.replace(PATH.main);
-        return;
-      }
     }
-  }, [getUser, user, isRoom]);
+  }, [getUser, user]);
+
+  useEffect(() => {
+    if (isRoom()) {
+      location.replace(PATH.main);
+    }
+  }, [isRoom]);
 
   return (
     <>

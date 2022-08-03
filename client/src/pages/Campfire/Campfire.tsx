@@ -11,6 +11,7 @@ import useAgora from '@src/hooks/useAgora';
 import { RoomType } from '@utils/constant';
 import { RoomInfoType } from '@src/types';
 import { useMicrophoneTrack } from '@src/components/video/config';
+import { PAGE_NAME } from '@src/utils/constant';
 
 interface LocationProps {
   pathname: string;
@@ -31,7 +32,7 @@ const Campfire = ({ location }: RoomProps): JSX.Element => {
     agoraToken,
     uuid,
     userInfo,
-    agoraType: 'campfire',
+    agoraType: PAGE_NAME.campfire,
     ready,
     track,
   });
