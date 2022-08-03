@@ -11,11 +11,11 @@ import { isEmail, isPassword, isNickname } from '@utils/utils';
 import { FORM } from '@utils/styleConstant';
 
 interface JoinProps {
-  onClickModalToggle: React.MouseEventHandler<HTMLButtonElement>;
-  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleModal: () => void;
+  toggleIsLogin: () => void;
 }
 
-const JoinForm = ({ onClickModalToggle, setIsLogin }: JoinProps): JSX.Element => {
+const JoinForm = ({ toggleModal, toggleIsLogin }: JoinProps): JSX.Element => {
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -35,7 +35,7 @@ const JoinForm = ({ onClickModalToggle, setIsLogin }: JoinProps): JSX.Element =>
     if (!isOk && errorData) {
       return toast('error', errorData.message);
     }
-    setIsLogin(true);
+    toggleModal();
     toast('success', TOAST_MESSAGE.joinSuccess);
   };
 
@@ -72,7 +72,7 @@ const JoinForm = ({ onClickModalToggle, setIsLogin }: JoinProps): JSX.Element =>
         <Select name={SELECT_TEXT.devField} options={devFieldOptions} onChange={handleDevFieldSelectChange} />
         <Button>회원가입</Button>
       </Form>
-      <ModalToggleSpan onClick={onClickModalToggle}>로그인 하러 가기</ModalToggleSpan>
+      <ModalToggleSpan onClick={toggleIsLogin}>로그인 하러 가기</ModalToggleSpan>
     </Container>
   );
 };

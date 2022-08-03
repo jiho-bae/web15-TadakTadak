@@ -10,11 +10,11 @@ import { isEmail, isPassword } from '@utils/utils';
 import { FORM } from '@utils/styleConstant';
 
 interface LoginProps {
-  onClickModalToggle: React.MouseEventHandler<HTMLButtonElement>;
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleModal: () => void;
+  toggleIsLogin: () => void;
 }
 
-const LoginForm = ({ onClickModalToggle, setModal }: LoginProps): JSX.Element => {
+const LoginForm = ({ toggleModal, toggleIsLogin }: LoginProps): JSX.Element => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const { logUserIn } = useUserFns();
@@ -29,7 +29,7 @@ const LoginForm = ({ onClickModalToggle, setModal }: LoginProps): JSX.Element =>
     const { isOk, data } = await postLogin(requestBody);
     if (isOk && data) {
       logUserIn(data);
-      setModal(false);
+      toggleModal();
       return toast('success', TOAST_MESSAGE.loginSuccess);
     }
     toast('error', TOAST_MESSAGE.loginConfirm);
@@ -57,7 +57,7 @@ const LoginForm = ({ onClickModalToggle, setModal }: LoginProps): JSX.Element =>
         </InputWrapper>
         <Button>로그인</Button>
       </Form>
-      <ModalToggleSpan onClick={onClickModalToggle}>회원가입 하러 가기</ModalToggleSpan>
+      <ModalToggleSpan onClick={toggleIsLogin}>회원가입 하러 가기</ModalToggleSpan>
     </Container>
   );
 };

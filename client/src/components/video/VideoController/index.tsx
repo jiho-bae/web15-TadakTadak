@@ -12,6 +12,7 @@ import { deleteRoom } from '@src/apis';
 import Button from '@components/common/CircleButton';
 import { useUser } from '@contexts/userContext';
 import { useTheme } from '@contexts/themeContext';
+import useToggle from '@src/hooks/useToggle';
 
 interface VideoControllerProps {
   tracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
@@ -26,7 +27,7 @@ const VideoController = ({ tracks, setStart, uuid, ownerId }: VideoControllerPro
   const user = useUser();
   const theme = useTheme();
   const [trackState, setTrackState] = useState({ video: false, audio: false });
-  const [screenShare, setScreenShare] = useState(false);
+  const [screenShare, toggleScreenShare] = useToggle(false);
 
   const mute = async (type: 'audio' | 'video') => {
     if (type === 'audio') {
@@ -42,10 +43,6 @@ const VideoController = ({ tracks, setStart, uuid, ownerId }: VideoControllerPro
       if (trackState.video) await client.publish(tracks[1]);
     }
   };
-
-  const handleScreenShare = useCallback(() => {
-    setScreenShare((prev) => !prev);
-  }, []);
 
   const leaveChannel = useCallback(async () => {
     if (ownerId === user.id) {
@@ -86,7 +83,7 @@ const VideoController = ({ tracks, setStart, uuid, ownerId }: VideoControllerPro
           icon={screenShare ? <MdScreenShare fill="white" /> : <MdStopScreenShare />}
           text={''}
           className={screenShare ? 'on' : ''}
-          onClick={handleScreenShare}
+          onClick={toggleScreenShare}
         />
         {screenShare && (
           <ScreenShare
@@ -94,7 +91,7 @@ const VideoController = ({ tracks, setStart, uuid, ownerId }: VideoControllerPro
             trackState={trackState}
             screenShare={screenShare}
             setStart={setStart}
-            setScreenShare={setScreenShare}
+            toggleScreenShare={toggleScreenShare}
           />
         )}
       </Controls>

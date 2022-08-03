@@ -2,12 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { ICameraVideoTrack, IMicrophoneAudioTrack } from 'agora-rtc-react';
 import { useClient, useScreenVideoTrack } from '@components/video/config';
 
-interface ScreenShareDivProps {
+interface ScreenShareProps {
   preTracks: [IMicrophoneAudioTrack, ICameraVideoTrack];
   trackState: { video: boolean; audio: boolean };
   screenShare: boolean;
   setStart: React.Dispatch<React.SetStateAction<boolean>>;
-  setScreenShare: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleScreenShare: () => void;
 }
 
 const ScreenShare = ({
@@ -15,8 +15,8 @@ const ScreenShare = ({
   trackState,
   screenShare,
   setStart,
-  setScreenShare,
-}: ScreenShareDivProps): JSX.Element => {
+  toggleScreenShare,
+}: ScreenShareProps): JSX.Element => {
   const client = useClient();
   const { ready, tracks, error } = useScreenVideoTrack();
   const firstRenderRef = useRef(true);
@@ -32,12 +32,12 @@ const ScreenShare = ({
           if (trackState.video) {
             await client.publish(preTracks[1]);
           }
-          setScreenShare(false);
+          toggleScreenShare();
         });
       }
     };
     if (ready && tracks) pulishScreenShare();
-    if (error) setScreenShare(false);
+    if (error) toggleScreenShare();
 
     return () => {
       if (firstRenderRef.current) {
@@ -49,9 +49,9 @@ const ScreenShare = ({
         tracks.close();
       }
     };
-  }, [setStart, setScreenShare, screenShare, client, preTracks, trackState, tracks, ready, error]);
+  }, [setStart, toggleScreenShare, screenShare, client, preTracks, trackState, tracks, ready, error]);
 
-  return <div></div>;
+  return <></>;
 };
 
 export default ScreenShare;
