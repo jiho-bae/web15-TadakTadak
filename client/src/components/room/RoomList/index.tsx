@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { RoomListGrid, TabWrapper } from './style';
+import { RoomWrapper, TabWrapper } from './style';
+import ListGenerator from '@src/components/room/ListGenerator';
 import Loader from '@components/common/Loader';
 import Tab from '@components/common/Tab';
-import RoomCard from '@components/room/RoomCard';
 import SearchBar from '@components/SearchBar';
 import TabInfo from '@components/room/TabInfo';
 import RefreshButton from '@components/room/RefreshButton';
@@ -12,17 +12,6 @@ import { getRoom } from '@src/apis';
 import { getRoomQueryObj } from '@src/apis/apiUtils';
 import { DEBOUNCE, INFINITE_SCROLL, ROOM_DESCRIPTION } from '@utils/constant';
 import { RoomInfoType, TabStateType } from '@src/types';
-
-interface ListGeneratorProps<T> {
-  list: T[];
-  renderItem: (item: T) => React.ReactNode;
-}
-
-const ListGenerator = <T extends unknown>({ list, renderItem }: ListGeneratorProps<T>): JSX.Element => {
-  return <>{list.map((item) => renderItem(item))}</>;
-};
-
-const renderRoomList = (roomInfo: RoomInfoType) => <RoomCard key={roomInfo.uuid} roomInfo={roomInfo} />;
 
 function RoomList(): JSX.Element {
   const [tabState, setTabState] = useState<TabStateType>({ tadak: true, campfire: false });
@@ -93,7 +82,7 @@ function RoomList(): JSX.Element {
         </Tab>
         <SearchBar search={search} onChange={onChangeSearch} onReset={onResetSearch} />
       </TabWrapper>
-      <RoomListGrid ref={target}>{rooms && <ListGenerator list={rooms} renderItem={renderRoomList} />}</RoomListGrid>
+      <RoomWrapper ref={target}>{rooms && <ListGenerator list={rooms} />}</RoomWrapper>
       {isLoading && <Loader />}
       <RefreshButton page={page} search={search} getRoomList={getRoomList} />
     </>

@@ -13,7 +13,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserByEmailWithDev(email: string): Promise<User | undefined> {
-    return await this.findOne({ where: { email: email }, relations: ['devField'] });
+    return await this.findOne({ where: { email }, relations: ['devField'] });
   }
 
   async findUserByNickname(nickname: string): Promise<User | undefined> {

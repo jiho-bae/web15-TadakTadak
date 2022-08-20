@@ -34,6 +34,8 @@ export const INPUT = {
 
 export const TOAST_TIME = 2000;
 
+export const SCREEN_SHARE_HEIGHT = 1080;
+
 export const MODAL_NAME = {
   login: '로그인',
   join: '회원가입',
@@ -49,6 +51,8 @@ export const PATH = {
 
 export const PAGE_NAME = {
   main: 'MAIN',
+  tadak: 'TADAK',
+  campfire: 'CAMPFIRE',
 };
 
 export const ROOM_DESCRIPTION = {
@@ -64,12 +68,14 @@ export const TOAST_MESSAGE = {
   nothingChange: '변경 사항이 없습니다.',
   deleteImgSuccess: '아바타를 성공적으로 제거했습니다.',
   updateImgSuccess: '아바타를 성공적으로 변경했습니다.',
+  fetchError: '현재 요청이 불가능합니다. 잠시 후 다시 시도해주세요.',
   inputEmpty: '모두 입력해주세요.',
   invalidFormatEmail: '이메일 형식을 확인해주세요.',
   invalidFormatPwd: '비밀번호는 6자 이상 20자 이하 영문과 숫자를 반드시 포함해야 합니다.',
   invalidFormatNickname: '닉네임은 2자 이상 15자 이하 영문,숫자,한글만 입력할 수 있습니다.',
   invalidPassword: '비밀번호가 틀렸습니다.',
   notAllowedNonLogin: '로그인 후 입장할 수 있습니다.',
+  exceedEntryCapacity: '입장 가능한 인원을 초과했습니다.',
   loginConfirm: '이메일 및 비밀번호를 확인해주세요',
   alreadyEmail: '이미 등록되어 있는 이메일입니다.',
   alreadyNickname: '이미 등록되어 있는 닉네임입니다.',
@@ -86,7 +92,7 @@ export const TOAST_MESSAGE = {
   introduceHost:
     '호스트는 참가자를 강퇴할 수 있습니다.　 강퇴 당한 사용자는 다시 이 방에 들어올 수 없으니 신중하게 사용해주세요!',
   narcissism: '누구나 자기 자신을 좋아합니다...!',
-  infoDoubleClick: '더블 클릭 하면 어떤 일이 일어날까요...?',
+  infoDoubleClick: '화면공유된 블록을 더블 클릭 하면 어떤 일이 일어날까요...?',
   introFireAnimation: '자세히 보시면 불꽃이 일렁입니다...!',
   introMoon: '자세히 보시면 달이 반짝입니다...!',
   introSky: '자세히 보시면 별이 반짝이고 별똥별이 떨어집니다...!',

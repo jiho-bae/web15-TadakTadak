@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { IoHomeOutline, IoLogOutOutline } from 'react-icons/io5';
 import { UserInfo, LoginBtn, MakeRoomBtn, UserAvatar, UserNickname, UserDevField, MainLink, LogoutBtn } from './style';
@@ -11,22 +11,21 @@ import { useDevFieldFns } from '@contexts/devFieldContext';
 import { useToast } from '@hooks/useToast';
 import { getDevField, postLogout } from '@src/apis';
 import { PAGE_NAME, PATH, TOAST_MESSAGE } from '@utils/constant';
+import useToggle from '@src/hooks/useToggle';
 
 interface SideBarProps {
   page?: string;
 }
 
 const MainSideBar = ({ page }: SideBarProps): JSX.Element => {
-  const [loginModal, setLoginModal] = useState(false);
-  const [makeRoomModal, setMakeRoomModal] = useState(false);
+  const [loginModal, toggleLoginModal] = useToggle(false);
+  const [makeRoomModal, toggleMakeRoomModal] = useToggle(false);
   const user = useUser();
   const toast = useToast();
   const { logUserOut } = useUserFns();
   const history = useHistory();
   const { registerDevField } = useDevFieldFns();
 
-  const onClickLoginBtn = () => setLoginModal(!loginModal);
-  const onClickMakeRoomBtn = () => setMakeRoomModal(true);
   const onClickUserInfoBtn = () => history.push(PATH.profile);
   const onClickLogoutBtn = async () => {
     const { isOk } = await postLogout();
@@ -80,15 +79,17 @@ const MainSideBar = ({ page }: SideBarProps): JSX.Element => {
           </>
         ) : (
           <>
-            <LoginBtn onClick={onClickLoginBtn}>로그인</LoginBtn>
-            {loginModal && <LoginModal modal={loginModal} setModal={setLoginModal} />}
+            <LoginBtn onClick={toggleLoginModal}>로그인</LoginBtn>
+            {loginModal && <LoginModal modal={loginModal} toggleModal={toggleLoginModal} />}
           </>
         )
       }
       bottomMenus={
         <>
-          {user.login && <MakeRoomBtn onClick={onClickMakeRoomBtn}>방 생성하기</MakeRoomBtn>}
-          {makeRoomModal && <Modal title="방 생성하기" children={<MakeRoomForm />} setModal={setMakeRoomModal} />}
+          {user.login && <MakeRoomBtn onClick={toggleMakeRoomModal}>방 생성하기</MakeRoomBtn>}
+          {makeRoomModal && (
+            <Modal title="방 생성하기" children={<MakeRoomForm />} onClickBlackBackground={toggleMakeRoomModal} />
+          )}
         </>
       }
     />

@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
 import LoginForm from '@components/form/Login';
 import JoinForm from '@components/form/Join';
 import Modal from '@components/modal/Modal';
 import { MODAL_NAME } from '@utils/constant';
+import useToggle from '@src/hooks/useToggle';
 
 interface LoginProps {
   modal: boolean;
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleModal: () => void;
 }
 
-const Login = ({ modal, setModal }: LoginProps): JSX.Element => {
-  const [isLogin, setIsLogin] = useState(true);
-  const onClickModalToggle = () => setIsLogin(!isLogin);
+const Login = ({ modal, toggleModal }: LoginProps): JSX.Element => {
+  const [isLogin, toggleIsLogin] = useToggle(true);
 
   return (
     <>
       {modal && (
-        <Modal title={isLogin ? MODAL_NAME.login : MODAL_NAME.join} setModal={setModal}>
+        <Modal title={isLogin ? MODAL_NAME.login : MODAL_NAME.join} onClickBlackBackground={toggleModal}>
           {isLogin ? (
-            <LoginForm onClickModalToggle={onClickModalToggle} setModal={setModal} />
+            <LoginForm toggleModal={toggleModal} toggleIsLogin={toggleIsLogin} />
           ) : (
-            <JoinForm onClickModalToggle={onClickModalToggle} setIsLogin={setIsLogin} />
+            <JoinForm toggleModal={toggleModal} toggleIsLogin={toggleIsLogin} />
           )}
         </Modal>
       )}

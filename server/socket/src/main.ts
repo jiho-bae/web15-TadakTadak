@@ -16,7 +16,7 @@ async function bootstrap() {
   app.useWebSocketAdapter(redis);
   app.useGlobalFilters(new WsExceptionFilter());
   app.enableCors(CorsConfig);
-  await app.listen(process.env.NODE_PORT ?? 3000);
+  await app.listen(process.env.NODE_PORT ?? 3002);
 }
 
 bootstrap();

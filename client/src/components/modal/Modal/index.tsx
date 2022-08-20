@@ -4,11 +4,10 @@ import { Container, BlackBackground, Content, Title } from './style';
 interface ModalProps {
   title?: string;
   children: React.ReactNode;
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  onClickBlackBackground: () => void;
 }
 
-const Modal = ({ setModal, children, title }: ModalProps): JSX.Element => {
-  const onClickBlackBackground = () => setModal(false);
+const Modal = ({ onClickBlackBackground, children, title }: ModalProps): JSX.Element => {
   const onClickContent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => e.stopPropagation();
 
   return (

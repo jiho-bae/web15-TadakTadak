@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { IAgoraRTCRemoteUser } from 'agora-rtc-react';
 import { RoomContainer, RoomWrapper } from '@pages/Campfire/style';
-import { useClient, useMicrophoneTrack } from '@components/video/config';
 import RoomSideBar from '@components/sideBar/Room';
 import FireAnimation from '@src/components/fireAnimation/Campfire';
 import CampfireController from '@src/components/campfire/Controller';
@@ -10,9 +7,11 @@ import CamperList from '@src/components/campfire/CamperList';
 import Loader from '@components/common/Loader';
 import BGMContextProvider from '@contexts/bgmContext';
 import { useUser } from '@contexts/userContext';
+import useAgora from '@src/hooks/useAgora';
 import { RoomType } from '@utils/constant';
 import { RoomInfoType } from '@src/types';
-import { postLeaveRoom } from '@src/apis';
+import { useMicrophoneTrack } from '@src/components/video/config';
+import { PAGE_NAME } from '@src/utils/constant';
 
 interface LocationProps {
   pathname: string;
@@ -25,61 +24,18 @@ interface RoomProps {
 
 const Campfire = ({ location }: RoomProps): JSX.Element => {
   const { agoraAppId, agoraToken, uuid, owner, maxHeadcount } = location.state;
-  const [users, setUsers] = useState<IAgoraRTCRemoteUser[]>([]);
-  const [start, setStart] = useState<boolean>(false);
-  const client = useClient();
   const { ready, track } = useMicrophoneTrack();
   const [fireOn, setFireOn] = useState(false);
   const userInfo = useUser();
-  const history = useHistory();
-
-  useEffect(() => {
-    if (!userInfo.login) {
-      postLeaveRoom(uuid);
-      history.goBack();
-      return;
-    }
-    const init = async () => {
-      client.on('user-published', async (user, mediaType) => {
-        await client.subscribe(user, mediaType);
-        console.log('subscribe success');
-        if (mediaType === 'audio') {
-          setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
-          user.audioTrack?.play();
-        }
-      });
-
-      client.on('user-joined', (user) => {
-        setUsers((prevUsers) => [...new Set([...prevUsers, user])]);
-      });
-
-      client.on('user-unpublished', (user, type) => {
-        console.log('unpublished', user, type);
-        if (type === 'audio') {
-          user.audioTrack?.stop();
-        }
-      });
-
-      client.on('user-left', (user) => {
-        console.log('leaving', user);
-        setUsers((prevUsers) => {
-          return prevUsers.filter((User) => User.uid !== user.uid);
-        });
-      });
-
-      await client.join(agoraAppId, uuid, agoraToken, encodeURI(userInfo.nickname ?? ''));
-      if (track) {
-        await client.publish(track);
-        await track.setEnabled(false);
-      }
-      setStart(true);
-    };
-
-    if (ready && track) {
-      console.log('init ready');
-      init();
-    }
-  }, [uuid, agoraAppId, agoraToken, client, ready, track, userInfo, history]);
+  const { users, start, setStart } = useAgora({
+    agoraAppId,
+    agoraToken,
+    uuid,
+    userInfo,
+    agoraType: PAGE_NAME.campfire,
+    ready,
+    track,
+  });
 
   useEffect(() => setFireOn(true), []);
 
